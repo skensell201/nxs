@@ -111,6 +111,8 @@ nxs promote reject <request-id> [--reason TEXT]        Reject a request
 ### Operations
 ```
 nxs cleanup run <policy-name>                          Run a cleanup policy now
+nxs blobstore list                                     List blob stores
+nxs blobstore info <name>                              Show blob store details
 nxs blobstore compact <name> [--dry-run] [--min-age D] Garbage-collect unreferenced blobs
 nxs migrate from <nexus-url> [--user U] [--repos]     Migrate from Nexus
                 [--users] [--blobs]
