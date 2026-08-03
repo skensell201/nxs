@@ -5,6 +5,43 @@ import (
 	"fmt"
 )
 
+// BlobStore is a physical storage backend that repositories write their blobs to.
+// The server's config map is deliberately not decoded here: it carries backend
+// credentials that have no business being printed by a CLI.
+type BlobStore struct {
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	Type       string `json:"type"`
+	QuotaBytes *int64 `json:"quotaBytes,omitempty"`
+	UsedBytes  int64  `json:"usedBytes"`
+}
+
+// BlobStoreList returns every blob store the server knows about.
+func (c *Client) BlobStoreList() ([]BlobStore, error) {
+	resp, err := c.r.R().Get("/service/rest/v1/blobstores")
+	if err != nil {
+		return nil, err
+	}
+	if err := checkErr(resp); err != nil {
+		return nil, err
+	}
+	var stores []BlobStore
+	return stores, json.Unmarshal(resp.Body(), &stores)
+}
+
+// BlobStoreInfo returns a single blob store by name.
+func (c *Client) BlobStoreInfo(name string) (*BlobStore, error) {
+	resp, err := c.r.R().Get("/service/rest/v1/blobstores/" + name)
+	if err != nil {
+		return nil, err
+	}
+	if err := checkErr(resp); err != nil {
+		return nil, err
+	}
+	var bs BlobStore
+	return &bs, json.Unmarshal(resp.Body(), &bs)
+}
+
 // GCResult reports what a blob store compaction found and removed.
 type GCResult struct {
 	Store        string   `json:"store"`
